@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>New Tab</title>
+    <!-- Fonts: Space Grotesk, Space Mono, Doto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="newtab.css">
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <!-- Tertiary Layer: Top Bar -->
+        <header class="top-bar">
+            <div class="system-info">
+                <button id="mode-toggle" class="mono-label mode-btn">[ DARK_MODE ]</button>
+                <button id="license-toggle" class="mono-label mode-btn">[ LICENSE ]</button>
+            </div>
+            <div class="branding">
+                <span class="mono-label">VOID_UI // v3.0</span>
+            </div>
+        </header>
+
+        <!-- Primary Layer: The Hero -->
+        <main class="hero">
+            <div id="clock" class="clock-display">00:00</div>
+            <div class="secondary-stack">
+                <div id="date" class="date-text">MONDAY, MAY 4</div>
+                <div id="greeting" class="mono-label">READY_TO_START</div>
+            </div>
+            
+            <div class="search-hero">
+                <div class="mono-label">GLOBAL_SEARCH</div>
+                <input type="text" id="search-input" placeholder="TYPE_HERE..." autocomplete="off">
+            </div>
+        </main>
+
+        <!-- Secondary Layer: Widgets Grid (Now on the Right) -->
+        <section class="widgets-grid">
+            <div class="circular-row">
+                <div class="circle-widget">
+                    <svg width="100" height="100">
+                        <circle class="bg" cx="50" cy="50" r="46" stroke-width="4" fill="none"/>
+                        <circle id="battery-circle" class="progress" cx="50" cy="50" r="46" stroke-width="4" fill="none" stroke-dasharray="289" stroke-dashoffset="289"/>
+                    </svg>
+                    <div id="battery-value" class="value">--%</div>
+                    <div class="label">BATTERY</div>
+                </div>
+                <div class="circle-widget">
+                    <svg width="100" height="100">
+                        <circle class="bg" cx="50" cy="50" r="46" stroke-width="4" fill="none"/>
+                        <circle id="day-circle" class="progress" cx="50" cy="50" r="46" stroke-width="4" fill="none" stroke-dasharray="289" stroke-dashoffset="289"/>
+                    </svg>
+                    <div id="day-percent" class="value">--%</div>
+                    <div class="label">DAY_PHASE</div>
+                </div>
+            </div>
+
+            <div class="widget-card">
+                <div class="mono-label">YEAR_PROGRESS</div>
+                <div class="segmented-progress" id="year-progress"></div>
+                <div id="year-percent" class="mono-label tertiary">--% COMPLETED</div>
+            </div>
+
+        </section>
+
+        <!-- Tertiary Layer: Bottom Bar -->
+        <footer class="bottom-bar">
+            <div class="system-stats">
+                <span id="session-info" class="mono-label">UPTIME: 00:00:00</span>
+            </div>
+            <nav class="quick-links">
+                <a href="https://github.com" class="mono-link">GITHUB</a>
+                <a href="https://google.com" class="mono-link">GOOGLE</a>
+                <a href="https://youtube.com" class="mono-link">YOUTUBE</a>
+            </nav>
+        </footer>
+    </div>
+    <!-- License Modal -->
+    <div id="license-modal" class="modal">
+        <div class="modal-content">
+            <header class="modal-header">
+                <span class="mono-label">SYSTEM_CREDITS</span>
+                <button id="close-license" class="close-btn">[ CLOSE ]</button>
+            </header>
+            
+            <section class="modal-body">
+                <div class="credit-section">
+                    <h3 class="mono-label">DEVELOPER_INFO</h3>
+                    <p class="credit-name">NamiCode</p>
+                    <div class="credit-details">
+                        <a href="https://karotter.com/profile/namicode" target="_blank" class="mono-link">KAROTTER: @namicode</a><br>
+                        <a href="https://github.com/NamiCode-Dev" target="_blank" class="mono-link">GITHUB: @NamiCode-Dev</a>
+                    </div>
+                </div>
+
+                <div class="credit-section">
+                    <h3 class="mono-label">THIRD_PARTY_LICENSES</h3>
+                    <div class="usage-note">
+                        <span class="mono-label">USAGE_NOTE</span>
+                        <p class="small-text">Used for design tokens, typography rules, and industrial UI patterns inspired by Nothing OS.</p>
+                    </div>
+                    <pre class="license-text">
+MIT License
+
+Copyright (c) 2026 Dominik Martin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+                    </pre>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="newtab.js"></script>
+</body>
+</html>

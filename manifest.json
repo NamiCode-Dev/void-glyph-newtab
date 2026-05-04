@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "VOID // GLYPH New Tab",
+  "version": "1.0.0",
+  "description": "A high-fidelity, industrial New Tab page inspired by the Nothing OS design system.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": ["storage"],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
