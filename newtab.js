@@ -90,7 +90,10 @@ function handleSearch(e) {
     if (e.key === 'Enter') {
         const query = e.target.value.trim();
         if (query) {
-            window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            chrome.search.query({
+                text: query,
+                disposition: 'CURRENT_TAB'
+            });
         }
     }
 }

@@ -18,7 +18,7 @@ Experience a seamless interface where every widget updates at a high frequency o
     - **YEAR_PROGRESS**: Track the year's progress through a unique segmented bar.
 - **Session Uptime**: A live counter showing how long your current tab has been active (100ms precision).
 - **Light / Dark Mode**: Instantly toggle between a warm off-white and a deep industrial black.
-- **Global Search**: A centered, distraction-free Google search bar for immediate navigation.
+- **Global Search**: A centered, distraction-free search bar that respects your default search provider.
 
 ## 🚀 Installation (Manual)
 
