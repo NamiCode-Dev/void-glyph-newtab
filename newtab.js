@@ -86,20 +86,168 @@ async function updateBattery() {
     }
 }
 
-function handleSearch(e) {
-    if (e.key === 'Enter') {
-        const query = e.target.value.trim();
-        if (query) {
-            chrome.search.query({
-                text: query,
-                disposition: 'CURRENT_TAB'
-            });
+let currentFocus = -1;
+let originalQuery = '';
+let debounceTimer;
+
+const searchInput = document.getElementById('search-input');
+const suggestionsList = document.getElementById('suggestions');
+
+// Mock data for local testing (when running outside Chrome Extension context)
+const mockSuggestions = [
+    "GitHub",
+    "Google",
+    "YouTube",
+    "Wikipedia",
+    "Nothing OS",
+    "Weather tomorrow",
+    "Web development",
+    "Chrome Extension"
+];
+
+async function fetchSuggestions(query) {
+    if (!query) {
+        hideSuggestions();
+        return;
+    }
+
+    const lang = (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getUILanguage().split('-')[0] : 'ja';
+
+    try {
+        let suggestions = [];
+        if (typeof chrome === 'undefined' || !chrome.search) {
+            // Local mockup fallback
+            suggestions = mockSuggestions.filter(item => 
+                item.toLowerCase().includes(query.toLowerCase())
+            );
+        } else {
+            // Wikipedia OpenSearch API (ToS compliant, free, keyless)
+            const response = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&search=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            suggestions = data[1] || [];
         }
+        showSuggestions(suggestions);
+    } catch (e) {
+        console.error('Failed to fetch suggestions:', e);
+    }
+}
+
+function showSuggestions(suggestions) {
+    suggestionsList.innerHTML = '';
+    currentFocus = -1;
+    
+    if (suggestions.length === 0) {
+        hideSuggestions();
+        return;
+    }
+
+    const limit = Math.min(suggestions.length, 5);
+    for (let i = 0; i < limit; i++) {
+        const word = suggestions[i];
+        const li = document.createElement('li');
+        li.className = 'suggestion-item';
+        
+        const span = document.createElement('span');
+        span.className = 'suggestion-text';
+        span.textContent = word;
+        li.appendChild(span);
+        
+        li.dataset.value = word;
+        
+        suggestionsList.appendChild(li);
+    }
+    
+    suggestionsList.classList.add('active');
+
+    // Check if suggestions list would be cut off at the bottom
+    const inputRect = searchInput.getBoundingClientRect();
+    const listHeight = suggestionsList.offsetHeight || (limit * 33);
+    const spaceBelow = window.innerHeight - inputRect.bottom;
+
+    if (spaceBelow < listHeight && inputRect.top > listHeight) {
+        suggestionsList.classList.add('drop-up');
+    } else {
+        suggestionsList.classList.remove('drop-up');
+    }
+}
+
+function hideSuggestions() {
+    suggestionsList.classList.remove('active');
+    suggestionsList.classList.remove('drop-up');
+    suggestionsList.innerHTML = '';
+    currentFocus = -1;
+}
+
+function executeSearch(query) {
+    if (typeof chrome !== 'undefined' && chrome.search && chrome.search.query) {
+        chrome.search.query({
+            text: query,
+            disposition: 'CURRENT_TAB'
+        });
+    } else {
+        // Fallback search link respecting user intent for local debugging
+        window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    }
+}
+
+function handleSearch(e) {
+    const items = suggestionsList.getElementsByTagName('li');
+    
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentFocus++;
+        addActive(items);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentFocus--;
+        addActive(items);
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentFocus > -1 && items[currentFocus]) {
+            const query = items[currentFocus].dataset.value;
+            executeSearch(query);
+        } else {
+            const query = searchInput.value.trim();
+            if (query) {
+                executeSearch(query);
+            }
+        }
+    } else if (e.key === 'Escape') {
+        hideSuggestions();
+        searchInput.value = originalQuery;
+    }
+}
+
+function addActive(items) {
+    if (!items || items.length === 0) return;
+    removeActive(items);
+    
+    if (currentFocus >= items.length) currentFocus = -1;
+    if (currentFocus < -1) currentFocus = items.length - 1;
+    
+    if (currentFocus === -1) {
+        searchInput.value = originalQuery;
+    } else {
+        items[currentFocus].classList.add('selected');
+        searchInput.value = items[currentFocus].dataset.value;
+        items[currentFocus].scrollIntoView({ block: 'nearest' });
+    }
+}
+
+function removeActive(items) {
+    for (let i = 0; i < items.length; i++) {
+        items[i].classList.remove('selected');
     }
 }
 
 async function initMode() {
-    const { mode } = await chrome.storage.local.get('mode');
+    let mode = 'dark';
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        const data = await chrome.storage.local.get('mode');
+        mode = data.mode || 'dark';
+    } else {
+        mode = localStorage.getItem('mode') || 'dark';
+    }
     const isLight = mode === 'light';
     document.body.classList.toggle('light-mode', isLight);
     document.getElementById('mode-toggle').textContent = isLight ? '[ LIGHT_MODE ]' : '[ DARK_MODE ]';
@@ -108,7 +256,11 @@ async function initMode() {
 async function toggleMode() {
     const isLight = document.body.classList.toggle('light-mode');
     const mode = isLight ? 'light' : 'dark';
-    await chrome.storage.local.set({ mode });
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        await chrome.storage.local.set({ mode });
+    } else {
+        localStorage.setItem('mode', mode);
+    }
     document.getElementById('mode-toggle').textContent = isLight ? '[ LIGHT_MODE ]' : '[ DARK_MODE ]';
 }
 
@@ -139,7 +291,37 @@ setInterval(updateProgress, 100);
 setInterval(updateSessionStats, 100);   
 setInterval(updateStatus, 100);
 
-document.getElementById('search-input').addEventListener('keydown', handleSearch);
+searchInput.addEventListener('keydown', handleSearch);
+searchInput.addEventListener('input', (e) => {
+    const query = e.target.value;
+    originalQuery = query;
+    
+    clearTimeout(debounceTimer);
+    if (query.trim()) {
+        debounceTimer = setTimeout(() => {
+            fetchSuggestions(query.trim());
+        }, 200);
+    } else {
+        hideSuggestions();
+    }
+});
+
+searchInput.addEventListener('blur', () => {
+    hideSuggestions();
+});
+
+suggestionsList.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+});
+
+suggestionsList.addEventListener('click', (e) => {
+    const item = e.target.closest('.suggestion-item');
+    if (item) {
+        const query = item.dataset.value;
+        const url = item.dataset.url;
+        executeSearch(query, url);
+    }
+});
 document.getElementById('mode-toggle').addEventListener('click', toggleMode);
 document.getElementById('license-toggle').addEventListener('click', () => {
     document.getElementById('license-modal').classList.add('active');

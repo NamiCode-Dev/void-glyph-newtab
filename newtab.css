@@ -7,6 +7,7 @@
     --text-disabled: #666666;
     --accent-red: #D71921;
     --segment-inactive: #222222;
+    --bg-hover: rgba(255, 255, 255, 0.08);
 
     /* Fonts */
     --font-display: 'Doto', sans-serif;
@@ -30,13 +31,36 @@ body.light-mode {
     --text-secondary: #666666;
     --text-disabled: #A0A0A0;
     --segment-inactive: #E0E0E0;
+    --bg-hover: rgba(0, 0, 0, 0.05);
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-disabled) transparent;
 }
+
+/* --- Custom Scrollbar (Nothing OS style: minimalist, square, industrial) --- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-disabled);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-red);
+}
+
 
 body {
     background-color: var(--bg-primary);
@@ -314,6 +338,11 @@ body {
     opacity: 0.6;
 }
 
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
 #search-input {
     background: transparent;
     border: none;
@@ -333,6 +362,77 @@ body {
 
 #search-input::placeholder {
     color: var(--text-disabled);
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--text-disabled);
+    border-top: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
+    max-height: 180px;
+    overflow-y: auto;
+    display: none;
+}
+
+.suggestions-list.active {
+    display: block;
+}
+
+.suggestions-list.drop-up {
+    top: auto;
+    bottom: 100%;
+    border-top: 1px solid var(--text-disabled);
+    border-bottom: none;
+}
+
+.suggestion-item {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: var(--space-s) var(--space-m);
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 1px dashed var(--segment-inactive);
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    min-width: 0;
+}
+
+.suggestion-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+    background-color: var(--bg-hover);
+    color: var(--text-display);
+}
+
+.suggestion-item::before {
+    content: '○';
+    font-size: 8px;
+    color: var(--text-disabled);
+}
+
+.suggestion-item.selected::before {
+    content: '●' !important;
+    color: var(--accent-red);
 }
 
 .value-text {
