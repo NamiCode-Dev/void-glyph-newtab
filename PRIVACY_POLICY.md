@@ -8,7 +8,8 @@ This Privacy Policy describes how we handle information in the **VOID // GLYPH N
 We do not intentionally collect, store, or transmit any personally identifiable information (PII) from our users. This extension is designed to be as private as possible while providing its core features.
 
 ### 2. Third-Party Services
-This extension uses **Google Fonts** (Google LLC) to display custom typography. When the extension loads, your browser may communicate with Google's servers to fetch the font files. Additionally, to provide real-time search suggestions as you type, the extension fetches matching terms from **Wikipedia** (Wikimedia Foundation) via HTTPS. No personally identifiable information or query tracking data is transmitted during this process.
+- **Google Fonts** (Google LLC): This extension uses Google Fonts to display custom typography. When the extension loads, your browser requests the font files directly from Google's servers. During this request, Google automatically receives and may process technical data such as your IP address and User-Agent in accordance with their privacy policies. We do not transmit any of your personal extension settings or data to Google.
+- **Wikipedia** (Wikimedia Foundation): Used to provide real-time search suggestions as you type. The extension fetches matching terms from Wikipedia via HTTPS. No personally identifiable information or query tracking data is transmitted during this process.
 
 ### 3. Search Functionality
 When you type in the search bar, your input is sent to Wikipedia's OpenSearch API to generate autocomplete suggestions. When you submit a search query, it is processed directly by your browser's default search provider using the `chrome.search` API. This extension does not intercept, store, or transmit your final search queries to any servers other than your chosen default search engine.
